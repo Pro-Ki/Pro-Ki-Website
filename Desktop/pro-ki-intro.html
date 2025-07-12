@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pro-ki Restaurant</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        h1 {
+            color: #d35400;
+            font-size: 3em;
+        }
+        .menu-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .menu-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px dashed #ddd;
+            transition: background-color 0.3s;
+        }
+        .menu-item:hover {
+            background-color: #f9f9f9;
+        }
+        .item-info {
+            display: flex;
+            justify-content: space-between;
+            flex-grow: 1;
+            cursor: pointer;
+        }
+        .item-name {
+            font-weight: bold;
+            color: #333;
+        }
+        .item-price {
+            color: #d35400;
+            font-weight: bold;
+        }
+        .order-btn {
+            background-color: #d35400;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-left: 15px;
+            transition: background-color 0.3s;
+        }
+        .order-btn:hover {
+            background-color: #e67e22;
+        }
+        .image-display {
+            text-align: center;
+            margin-top: 20px;
+            display: none;
+        }
+        .image-display img {
+            max-width: 100%;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        .image-title {
+            font-weight: bold;
+            margin-top: 10px;
+            color: #333;
+        }
+        .cart-summary {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
+        }
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        .cart-item span:nth-child(1) {
+            flex: 2;
+            text-align: left;
+        }
+        .cart-item span:nth-child(2) {
+            flex: 1;
+            text-align: center;
+            color: #666;
+            font-size: 0.9em;
+            min-width: 60px;
+        }
+        .cart-item span:nth-child(3) {
+            flex: 1;
+            text-align: right;
+            font-weight: bold;
+            min-width: 80px;
+        }
+        .total {
+            font-weight: bold;
+            color: #d35400;
+            border-top: 1px solid #dee2e6;
+            padding-top: 10px;
+            margin-top: 10px;
+        }
+        .checkout-btn {
+            background-color: #27ae60;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            width: 100%;
+            margin-top: 10px;
+        }
+        .checkout-btn:hover {
+            background-color: #2ecc71;
+        }
+        .checkout-btn:disabled {
+            background-color: #bdc3c7;
+            cursor: not-allowed;
+        }
+        .cart-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #dee2e6;
+            font-weight: bold;
+            color: #333;
+        }
+        .cart-header span:nth-child(1) {
+            flex: 2;
+            text-align: left;
+        }
+        .cart-header span:nth-child(2) {
+            flex: 1;
+            text-align: center;
+            min-width: 60px;
+        }
+        .cart-header span:nth-child(3) {
+            flex: 1;
+            text-align: right;
+            min-width: 80px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Pro-ki</h1>
+        <p>Delicious Chicken Specialties</p>
+    </header>
+
+    <div class="menu-container">
+        <h2>Our Chicken Menu</h2>
+        
+        <div class="menu-item">
+            <div class="item-info" onclick="showImage('chicken-breasts')">
+                <span class="item-name">Sliced Chicken Breasts (4 pieces)</span>
+                <span class="item-price">$12.00</span>
+            </div>
+            <button class="order-btn" onclick="addToCart('Sliced Chicken Breasts', 12.00)">Order</button>
+        </div>
+        
+        <div class="menu-item">
+            <div class="item-info" onclick="showImage('chicken-tenders')">
+                <span class="item-name">Chicken Tenders (8 pieces)</span>
+                <span class="item-price">$10.00</span>
+            </div>
+            <button class="order-btn" onclick="addToCart('Chicken Tenders', 10.00)">Order</button>
+        </div>
+
+        <div id="image-display" class="image-display">
+            <img id="food-image" src="" alt="Chicken dish">
+            <div id="image-title" class="image-title"></div>
+        </div>
+
+        <div id="cart-summary" class="cart-summary" style="display: none;">
+            <h3>Your Order</h3>
+            <div class="cart-header">
+                <span>Item</span>
+                <span>Quantity</span>
+                <span>Total Price</span>
+            </div>
+            <div id="cart-items"></div>
+            <div class="total">
+                <span>Total: $<span id="total-amount">0.00</span></span>
+            </div>
+            <button id="checkout-btn" class="checkout-btn" onclick="checkout()">Checkout</button>
+        </div>
+    </div>
+
+    <script>
+        let cart = [];
+        let total = 0;
+
+        function showImage(item) {
+            const imageDisplay = document.getElementById('image-display');
+            const foodImage = document.getElementById('food-image');
+            const imageTitle = document.getElementById('image-title');
+
+            if (item === 'chicken-breasts') {
+                foodImage.src = 'https://images.unsplash.com/photo-1559847844-5315695dadae?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8Y2hpY2tlbiUyMGJyZWFzdHxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=500&q=60';
+                imageTitle.textContent = 'Delicious Sliced Chicken Breasts (4 pieces)';
+            } else if (item === 'chicken-tenders') {
+                foodImage.src = 'https://images.unsplash.com/photo-1562967914-608f82629710?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8Y2hpY2tlbiUyMHRlbmRlcnN8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=500&q=60';
+                imageTitle.textContent = 'Crispy Chicken Tenders (8 pieces)';
+            }
+
+            imageDisplay.style.display = 'block';
+        }
+
+        function addToCart(itemName, price) {
+            // Check if item already exists in cart
+            const existingItem = cart.find(item => item.name === itemName);
+            
+            if (existingItem) {
+                // If item exists, increase quantity
+                existingItem.quantity += 1;
+                existingItem.totalPrice = existingItem.price * existingItem.quantity;
+            } else {
+                // If item doesn't exist, add new item with quantity 1
+                cart.push({ 
+                    name: itemName, 
+                    price: price, 
+                    quantity: 1, 
+                    totalPrice: price 
+                });
+            }
+            
+            // Recalculate total
+            total = cart.reduce((sum, item) => sum + item.totalPrice, 0);
+            
+            updateCartDisplay();
+            showCartSummary();
+            
+            
+            // Optional: Add a visual feedback
+            const button = event.target;
+            const originalText = button.textContent;
+            button.textContent = 'Added!';
+            button.style.backgroundColor = '#27ae60';
+            
+            setTimeout(() => {
+                button.textContent = originalText;
+                button.style.backgroundColor = '#d35400';
+            }, 1000);
+        
+        }
+
+        function updateCartDisplay() {
+            const cartItems = document.getElementById('cart-items');
+            const totalAmount = document.getElementById('total-amount');
+            
+            cartItems.innerHTML = '';
+            cart.forEach(item => {
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'cart-item';
+                itemDiv.innerHTML = `
+                    <span>${item.name}</span>
+                    <span>Qty: ${item.quantity}</span>
+                    <span>$${item.price.toFixed(2)}</span>
+                `;
+                cartItems.appendChild(itemDiv);
+            });
+            
+            totalAmount.textContent = total.toFixed(2);
+        }
+
+        function showCartSummary() {
+            const cartSummary = document.getElementById('cart-summary');
+            cartSummary.style.display = 'block';
+        }
+
+        function checkout() {
+            if (cart.length === 0) {
+                alert('Your cart is empty!');
+                return;
+            }
+            
+            const orderDetails = cart.map(item => `${item.name}: $${item.price.toFixed(2)}`).join('\n');
+            alert(`Order placed successfully!\n\nOrder Details:\n${orderDetails}\n\nTotal: $${total.toFixed(2)}\n\nThank you for ordering from Pro-ki!`);
+            
+            // Reset cart
+            cart = [];
+            total = 0;
+            updateCartDisplay();
+            document.getElementById('cart-summary').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
